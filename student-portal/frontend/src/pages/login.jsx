@@ -8,7 +8,7 @@ export default function Login() {
 
   function handleLogin(e) {
     e.preventDefault()
-    // Temporary: skip real auth, just navigate to dashboard
+   
     if (email && password) {
       navigate('/dashboard')
     }
