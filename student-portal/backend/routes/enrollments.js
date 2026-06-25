@@ -6,7 +6,7 @@ router.get('/', async (req, res) => {
   try {
     const enrollments = await Enrollment.find()
       .populate('studentId', 'name studentId')
-      .populate('courseId', 'title courseCode')
+      .populate('courseId', 'title courseCode instructor schedule credits')
     res.json(enrollments)
   } catch (err) {
     res.status(500).json({ message: err.message })

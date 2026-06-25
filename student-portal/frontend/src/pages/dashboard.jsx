@@ -1,33 +1,57 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const [student, setStudent] = useState(null)
+  const [enrollments, setEnrollments] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const student = {
-    name: 'Harsh Singh',
-    studentId: '24BCS027',
-    department: 'Computer Science',
-    semester: '4th Semester',
+  const token = localStorage.getItem('token')
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+
+  useEffect(() => {
+    if (!token) { navigate('/'); return }
+
+    async function fetchData() {
+      try {
+        const res = await fetch('http://localhost:5000/api/enrollments', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        const data = await res.json()
+        // Filter enrollments for this student
+        const mine = data.filter(e => e.studentId?._id === user.id)
+        setEnrollments(mine)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  function logout() {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    navigate('/')
   }
 
-  const stats = [
-    { label: 'GPA', value: '8.6', color: '#4f46e5' },
-    { label: 'Attendance', value: '82%', color: '#16a34a' },
-    { label: 'Courses', value: '5', color: '#d97706' },
-    { label: 'Credits', value: '18', color: '#dc2626' },
-  ]
+  const avgAttendance = enrollments.length
+    ? Math.round(enrollments.reduce((s, e) => s + e.attendance, 0) / enrollments.length)
+    : 0
 
-  const courses = [
-    { code: 'CS301', title: 'Data Structures', instructor: 'Dr. Mehta', schedule: 'Mon/Wed 10:00 AM' },
-    { code: 'CS302', title: 'Operating Systems', instructor: 'Dr. Singh', schedule: 'Tue/Thu 11:00 AM' },
-    { code: 'CS303', title: 'Database Management', instructor: 'Dr. Verma', schedule: 'Mon/Fri 9:00 AM' },
-    { code: 'CS304', title: 'Computer Networks', instructor: 'Dr. Rao', schedule: 'Wed/Fri 2:00 PM' },
-    { code: 'CS305', title: 'Web Technologies', instructor: 'Dr. Gupta', schedule: 'Tue/Thu 3:00 PM' },
-  ]
+  const avgMarks = enrollments.length
+    ? Math.round(enrollments.reduce((s, e) => s + (e.grade?.marks || 0), 0) / enrollments.length)
+    : 0
+
+  const gpa = (avgMarks / 10).toFixed(1)
+
+  if (loading) return <div style={{ padding: 40 }}>Loading...</div>
 
   return (
     <div style={styles.container}>
-      {/* Sidebar */}
       <div style={styles.sidebar}>
         <div style={styles.sidebarTitle}>Student Portal</div>
         <nav style={styles.nav}>
@@ -36,30 +60,34 @@ export default function Dashboard() {
           <div style={styles.navItem} onClick={() => navigate('/grades')}>Grades</div>
           <div style={styles.navItem} onClick={() => navigate('/attendance')}>Attendance</div>
         </nav>
-        <div style={styles.logoutBtn} onClick={() => navigate('/')}>Logout</div>
+        <div style={styles.logoutBtn} onClick={logout}>Logout</div>
       </div>
 
-      {/* Main Content */}
       <div style={styles.main}>
-        {/* Header */}
         <div style={styles.header}>
-          <div>
-            <h1 style={styles.heading}>Welcome, {student.name}</h1>
-            <p style={styles.subheading}>{student.studentId} · {student.department} · {student.semester}</p>
+          <h1 style={styles.heading}>Welcome, {user.name}</h1>
+          <p style={styles.subheading}>Student ID: {user.studentId} · Computer Science · 4th Semester</p>
+        </div>
+
+        <div style={styles.statsGrid}>
+          <div style={styles.statCard}>
+            <div style={{ ...styles.statValue, color: '#4f46e5' }}>{gpa}</div>
+            <div style={styles.statLabel}>GPA</div>
+          </div>
+          <div style={styles.statCard}>
+            <div style={{ ...styles.statValue, color: '#16a34a' }}>{avgAttendance}%</div>
+            <div style={styles.statLabel}>Attendance</div>
+          </div>
+          <div style={styles.statCard}>
+            <div style={{ ...styles.statValue, color: '#d97706' }}>{enrollments.length}</div>
+            <div style={styles.statLabel}>Courses</div>
+          </div>
+          <div style={styles.statCard}>
+            <div style={{ ...styles.statValue, color: '#dc2626' }}>{enrollments.reduce((s, e) => s + (e.courseId?.credits || 0), 0)}</div>
+            <div style={styles.statLabel}>Credits</div>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div style={styles.statsGrid}>
-          {stats.map((stat) => (
-            <div key={stat.label} style={styles.statCard}>
-              <div style={{ ...styles.statValue, color: stat.color }}>{stat.value}</div>
-              <div style={styles.statLabel}>{stat.label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Courses Table */}
         <div style={styles.section}>
           <h2 style={styles.sectionTitle}>Enrolled Courses</h2>
           <table style={styles.table}>
@@ -72,12 +100,12 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {courses.map((course) => (
-                <tr key={course.code} style={styles.tableRow}>
-                  <td style={styles.td}>{course.code}</td>
-                  <td style={styles.td}>{course.title}</td>
-                  <td style={styles.td}>{course.instructor}</td>
-                  <td style={styles.td}>{course.schedule}</td>
+              {enrollments.map((e) => (
+                <tr key={e._id} style={styles.tableRow}>
+                  <td style={styles.td}>{e.courseId?.courseCode}</td>
+                  <td style={styles.td}>{e.courseId?.title}</td>
+                  <td style={styles.td}>{e.courseId?.instructor}</td>
+                  <td style={styles.td}>{e.courseId?.schedule}</td>
                 </tr>
               ))}
             </tbody>

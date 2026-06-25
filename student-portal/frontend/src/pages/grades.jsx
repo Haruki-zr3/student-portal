@@ -1,25 +1,51 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function Grades() {
   const navigate = useNavigate()
+  const [enrollments, setEnrollments] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const grades = [
-    { code: 'CS301', title: 'Data Structures', marks: 87, letter: 'A', credits: 4 },
-    { code: 'CS302', title: 'Operating Systems', marks: 79, letter: 'B+', credits: 4 },
-    { code: 'CS303', title: 'Database Management', marks: 92, letter: 'A+', credits: 3 },
-    { code: 'CS304', title: 'Computer Networks', marks: 74, letter: 'B', credits: 3 },
-    { code: 'CS305', title: 'Web Technologies', marks: 88, letter: 'A', credits: 4 },
-  ]
+  const token = localStorage.getItem('token')
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
 
-  const gradeColor = (letter) => {
-    if (letter.startsWith('A')) return '#16a34a'
-    if (letter.startsWith('B')) return '#d97706'
+  useEffect(() => {
+    if (!token) { navigate('/'); return }
+
+    async function fetchData() {
+      try {
+        const res = await fetch('http://localhost:5000/api/enrollments', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        const data = await res.json()
+        setEnrollments(data.filter(e => e.studentId?._id === user.id))
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  const getColor = (letter) => {
+    if (letter?.startsWith('A')) return '#16a34a'
+    if (letter?.startsWith('B')) return '#d97706'
     return '#dc2626'
   }
 
+  const avgMarks = enrollments.length
+    ? Math.round(enrollments.reduce((s, e) => s + (e.grade?.marks || 0), 0) / enrollments.length)
+    : 0
+
+  const gpa = enrollments.length ? (avgMarks / 10).toFixed(1) : '0.0'
+  const totalCredits = enrollments.reduce((s, e) => s + (e.courseId?.credits || 0), 0)
+
+  if (loading) return <div style={{ padding: 40 }}>Loading...</div>
+
   return (
     <div style={styles.container}>
-      {/* Sidebar */}
       <div style={styles.sidebar}>
         <div style={styles.sidebarTitle}>Student Portal</div>
         <nav style={styles.nav}>
@@ -28,10 +54,9 @@ export default function Grades() {
           <div style={{ ...styles.navItem, ...styles.navActive }}>Grades</div>
           <div style={styles.navItem} onClick={() => navigate('/attendance')}>Attendance</div>
         </nav>
-        <div style={styles.logoutBtn} onClick={() => navigate('/')}>Logout</div>
+        <div style={styles.logoutBtn} onClick={() => { localStorage.clear(); navigate('/') }}>Logout</div>
       </div>
 
-      {/* Main */}
       <div style={styles.main}>
         <h1 style={styles.heading}>Grades</h1>
         <p style={styles.subheading}>Semester 4 · Academic Year 2025-26</p>
@@ -48,15 +73,15 @@ export default function Grades() {
               </tr>
             </thead>
             <tbody>
-              {grades.map((g) => (
-                <tr key={g.code} style={styles.tableRow}>
-                  <td style={styles.td}>{g.code}</td>
-                  <td style={styles.td}>{g.title}</td>
-                  <td style={styles.td}>{g.credits}</td>
-                  <td style={styles.td}>{g.marks}/100</td>
+              {enrollments.map((e) => (
+                <tr key={e._id} style={styles.tableRow}>
+                  <td style={styles.td}>{e.courseId?.courseCode}</td>
+                  <td style={styles.td}>{e.courseId?.title}</td>
+                  <td style={styles.td}>{e.courseId?.credits}</td>
+                  <td style={styles.td}>{e.grade?.marks}/100</td>
                   <td style={styles.td}>
-                    <span style={{ ...styles.badge, color: gradeColor(g.letter), backgroundColor: gradeColor(g.letter) + '18' }}>
-                      {g.letter}
+                    <span style={{ ...styles.badge, color: getColor(e.grade?.letter), backgroundColor: getColor(e.grade?.letter) + '18' }}>
+                      {e.grade?.letter}
                     </span>
                   </td>
                 </tr>
@@ -65,18 +90,17 @@ export default function Grades() {
           </table>
         </div>
 
-        {/* Summary */}
         <div style={styles.summaryRow}>
           <div style={styles.summaryCard}>
-            <div style={styles.summaryValue}>8.6</div>
+            <div style={styles.summaryValue}>{gpa}</div>
             <div style={styles.summaryLabel}>Current GPA</div>
           </div>
           <div style={styles.summaryCard}>
-            <div style={styles.summaryValue}>18</div>
+            <div style={styles.summaryValue}>{totalCredits}</div>
             <div style={styles.summaryLabel}>Total Credits</div>
           </div>
           <div style={styles.summaryCard}>
-            <div style={styles.summaryValue}>84</div>
+            <div style={styles.summaryValue}>{avgMarks}</div>
             <div style={styles.summaryLabel}>Average Marks</div>
           </div>
         </div>

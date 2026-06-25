@@ -1,19 +1,37 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function Courses() {
   const navigate = useNavigate()
+  const [courses, setCourses] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const courses = [
-    { code: 'CS301', title: 'Data Structures', instructor: 'Dr. Mehta', schedule: 'Mon/Wed 10:00 AM', credits: 4, room: 'B-204' },
-    { code: 'CS302', title: 'Operating Systems', instructor: 'Dr. Singh', schedule: 'Tue/Thu 11:00 AM', credits: 4, room: 'B-108' },
-    { code: 'CS303', title: 'Database Management', instructor: 'Dr. Verma', schedule: 'Mon/Fri 9:00 AM', credits: 3, room: 'A-301' },
-    { code: 'CS304', title: 'Computer Networks', instructor: 'Dr. Rao', schedule: 'Wed/Fri 2:00 PM', credits: 3, room: 'B-110' },
-    { code: 'CS305', title: 'Web Technologies', instructor: 'Dr. Gupta', schedule: 'Tue/Thu 3:00 PM', credits: 4, room: 'C-202' },
-  ]
+  const token = localStorage.getItem('token')
+
+  useEffect(() => {
+    if (!token) { navigate('/'); return }
+
+    async function fetchData() {
+      try {
+        const res = await fetch('http://localhost:5000/api/courses', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        const data = await res.json()
+        setCourses(data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  if (loading) return <div style={{ padding: 40 }}>Loading...</div>
 
   return (
     <div style={styles.container}>
-      {/* Sidebar */}
       <div style={styles.sidebar}>
         <div style={styles.sidebarTitle}>Student Portal</div>
         <nav style={styles.nav}>
@@ -22,19 +40,18 @@ export default function Courses() {
           <div style={styles.navItem} onClick={() => navigate('/grades')}>Grades</div>
           <div style={styles.navItem} onClick={() => navigate('/attendance')}>Attendance</div>
         </nav>
-        <div style={styles.logoutBtn} onClick={() => navigate('/')}>Logout</div>
+        <div style={styles.logoutBtn} onClick={() => { localStorage.clear(); navigate('/') }}>Logout</div>
       </div>
 
-      {/* Main */}
       <div style={styles.main}>
         <h1 style={styles.heading}>My Courses</h1>
-        <p style={styles.subheading}>Semester 4 · Academic Year 2025-26 · 5 Courses Enrolled</p>
+        <p style={styles.subheading}>Semester 4 · Academic Year 2025-26 · {courses.length} Courses</p>
 
         <div style={styles.grid}>
           {courses.map((c) => (
-            <div key={c.code} style={styles.card}>
+            <div key={c._id} style={styles.card}>
               <div style={styles.cardHeader}>
-                <span style={styles.codeTag}>{c.code}</span>
+                <span style={styles.codeTag}>{c.courseCode}</span>
                 <span style={styles.creditsTag}>{c.credits} Credits</span>
               </div>
               <h3 style={styles.cardTitle}>{c.title}</h3>
@@ -45,10 +62,6 @@ export default function Courses() {
               <div style={styles.cardRow}>
                 <span style={styles.cardLabel}>Schedule</span>
                 <span style={styles.cardValue}>{c.schedule}</span>
-              </div>
-              <div style={styles.cardRow}>
-                <span style={styles.cardLabel}>Room</span>
-                <span style={styles.cardValue}>{c.room}</span>
               </div>
             </div>
           ))}
@@ -73,15 +86,9 @@ const styles = {
   heading: { fontSize: '24px', color: '#1a1a2e', marginBottom: '4px' },
   subheading: { fontSize: '14px', color: '#666', marginBottom: '24px' },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' },
-  card: {
-    backgroundColor: '#fff', borderRadius: '10px', padding: '20px',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
-  },
+  card: { backgroundColor: '#fff', borderRadius: '10px', padding: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)' },
   cardHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' },
-  codeTag: {
-    backgroundColor: '#eef2ff', color: '#4f46e5', fontSize: '12px',
-    fontWeight: '600', padding: '3px 10px', borderRadius: '6px',
-  },
+  codeTag: { backgroundColor: '#eef2ff', color: '#4f46e5', fontSize: '12px', fontWeight: '600', padding: '3px 10px', borderRadius: '6px' },
   creditsTag: { fontSize: '12px', color: '#888' },
   cardTitle: { fontSize: '16px', color: '#1a1a2e', marginBottom: '14px' },
   cardRow: { display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderTop: '1px solid #f0f0f0' },

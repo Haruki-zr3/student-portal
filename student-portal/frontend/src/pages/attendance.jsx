@@ -1,15 +1,33 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function Attendance() {
   const navigate = useNavigate()
+  const [enrollments, setEnrollments] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const attendance = [
-    { code: 'CS301', title: 'Data Structures', total: 40, attended: 34 },
-    { code: 'CS302', title: 'Operating Systems', total: 38, attended: 30 },
-    { code: 'CS303', title: 'Database Management', total: 35, attended: 31 },
-    { code: 'CS304', title: 'Computer Networks', total: 36, attended: 27 },
-    { code: 'CS305', title: 'Web Technologies', total: 40, attended: 36 },
-  ]
+  const token = localStorage.getItem('token')
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+
+  useEffect(() => {
+    if (!token) { navigate('/'); return }
+
+    async function fetchData() {
+      try {
+        const res = await fetch('http://localhost:5000/api/enrollments', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        const data = await res.json()
+        setEnrollments(data.filter(e => e.studentId?._id === user.id))
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const getColor = (pct) => {
     if (pct >= 85) return '#16a34a'
@@ -23,9 +41,10 @@ export default function Attendance() {
     return 'Low'
   }
 
+  if (loading) return <div style={{ padding: 40 }}>Loading...</div>
+
   return (
     <div style={styles.container}>
-      {/* Sidebar */}
       <div style={styles.sidebar}>
         <div style={styles.sidebarTitle}>Student Portal</div>
         <nav style={styles.nav}>
@@ -34,10 +53,9 @@ export default function Attendance() {
           <div style={styles.navItem} onClick={() => navigate('/grades')}>Grades</div>
           <div style={{ ...styles.navItem, ...styles.navActive }}>Attendance</div>
         </nav>
-        <div style={styles.logoutBtn} onClick={() => navigate('/')}>Logout</div>
+        <div style={styles.logoutBtn} onClick={() => { localStorage.clear(); navigate('/') }}>Logout</div>
       </div>
 
-      {/* Main */}
       <div style={styles.main}>
         <h1 style={styles.heading}>Attendance</h1>
         <p style={styles.subheading}>Semester 4 · Academic Year 2025-26</p>
@@ -48,22 +66,18 @@ export default function Attendance() {
               <tr style={styles.tableHeader}>
                 <th style={styles.th}>Code</th>
                 <th style={styles.th}>Course Title</th>
-                <th style={styles.th}>Attended</th>
-                <th style={styles.th}>Total</th>
                 <th style={styles.th}>Percentage</th>
                 <th style={styles.th}>Status</th>
               </tr>
             </thead>
             <tbody>
-              {attendance.map((a) => {
-                const pct = Math.round((a.attended / a.total) * 100)
+              {enrollments.map((e) => {
+                const pct = e.attendance
                 const color = getColor(pct)
                 return (
-                  <tr key={a.code} style={styles.tableRow}>
-                    <td style={styles.td}>{a.code}</td>
-                    <td style={styles.td}>{a.title}</td>
-                    <td style={styles.td}>{a.attended}</td>
-                    <td style={styles.td}>{a.total}</td>
+                  <tr key={e._id} style={styles.tableRow}>
+                    <td style={styles.td}>{e.courseId?.courseCode}</td>
+                    <td style={styles.td}>{e.courseId?.title}</td>
                     <td style={styles.td}>
                       <div style={styles.barContainer}>
                         <div style={{ ...styles.bar, width: `${pct}%`, backgroundColor: color }} />
@@ -82,9 +96,8 @@ export default function Attendance() {
           </table>
         </div>
 
-        {/* Warning */}
         <div style={styles.warning}>
-          <strong>⚠ Note:</strong> Minimum 75% attendance required per subject. Students below this threshold may be barred from exams.
+          <strong>⚠ Note:</strong> Minimum 75% attendance required per subject.
         </div>
       </div>
     </div>
