@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
-import Courses from './pages/Courses'
-import Grades from './pages/Grades'
-import Attendance from './pages/Attendance'
-import AdminPanel from './pages/AdminPanel'
+import Login from './pages/login'
+import Dashboard from './pages/dashboard'
+import Courses from './pages/courses'
+import Grades from './pages/grades'
+import Attendance from './pages/attendance'
+import AdminPanel from './pages/adminpanel'
 
 function App() {
   return (

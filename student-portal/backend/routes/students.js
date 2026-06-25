@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
-const User = require('../models/User')
+const User = require('../models/user')
 
 // Get all students (admin)
 router.get('/', async (req, res) => {
