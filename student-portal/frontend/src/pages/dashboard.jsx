@@ -20,7 +20,7 @@ export default function Dashboard() {
         })
         const data = await res.json()
         // Filter enrollments for this student
-        const mine = data.filter(e => e.studentId?._id === user.id)
+        const mine = data.filter(e => e.studentId?._id?.toString() === user.id)
         setEnrollments(mine)
       } catch (err) {
         console.error(err)

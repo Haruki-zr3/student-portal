@@ -18,7 +18,7 @@ export default function Attendance() {
           headers: { Authorization: `Bearer ${token}` }
         })
         const data = await res.json()
-        setEnrollments(data.filter(e => e.studentId?._id === user.id))
+        setEnrollments(data.filter(e => e.studentId?._id?.toString() === user.id))
       } catch (err) {
         console.error(err)
       } finally {
