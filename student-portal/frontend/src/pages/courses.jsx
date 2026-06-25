@@ -13,7 +13,7 @@ export default function Courses() {
 
     async function fetchData() {
       try {
-        const res = await fetch('http://localhost:5000/api/courses', {
+        const res = await fetch('/api/courses', {
           headers: { Authorization: `Bearer ${token}` }
         })
         const data = await res.json()

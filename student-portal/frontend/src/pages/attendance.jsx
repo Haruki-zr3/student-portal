@@ -14,7 +14,7 @@ export default function Attendance() {
 
     async function fetchData() {
       try {
-        const res = await fetch('http://localhost:5000/api/enrollments', {
+        const res = await fetch('/api/enrollments', {
           headers: { Authorization: `Bearer ${token}` }
         })
         const data = await res.json()

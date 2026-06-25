@@ -15,7 +15,7 @@ export default function Dashboard() {
 
     async function fetchData() {
       try {
-        const res = await fetch('http://localhost:5000/api/enrollments', {
+        const res = await fetch('/api/auth/login', {
           headers: { Authorization: `Bearer ${token}` }
         })
         const data = await res.json()
