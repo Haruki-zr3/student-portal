@@ -34,7 +34,7 @@ async function seed() {
     { courseCode: 'CS301', title: 'Data Structures', instructor: 'Dr. Mehta', schedule: 'Mon/Wed 10:00 AM', credits: 4 },
     { courseCode: 'CS302', title: 'Operating Systems', instructor: 'Dr. Singh', schedule: 'Tue/Thu 11:00 AM', credits: 4 },
     { courseCode: 'CS303', title: 'Database Management', instructor: 'Dr. Verma', schedule: 'Mon/Fri 9:00 AM', credits: 3 },
-    { courseCode: 'CS304', title: 'Computer Networks', instructor: 'Dr. Rao', schedule: 'Wed/Fri 2:00 PM', credits: 3 },
+    { courseCode: 'CS304', title: 'Computer Architecture and Org', instructor: 'Dr. Rao', schedule: 'Wed/Fri 2:00 PM', credits: 3 },
     { courseCode: 'CS305', title: 'Web Technologies', instructor: 'Dr. Gupta', schedule: 'Tue/Thu 3:00 PM', credits: 4 },
   ])
 

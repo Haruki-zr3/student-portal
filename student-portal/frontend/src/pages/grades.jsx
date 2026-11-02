@@ -45,8 +45,8 @@ export default function Grades() {
   if (loading) return <div style={{ padding: 40 }}>Loading...</div>
 
   return (
-    <div style={styles.container}>
-      <div style={styles.sidebar}>
+    <div className="portal-shell" style={styles.container}>
+      <div className="portal-sidebar" style={styles.sidebar}>
         <div style={styles.sidebarTitle}>Student Portal</div>
         <nav style={styles.nav}>
           <div style={styles.navItem} onClick={() => navigate('/dashboard')}>Dashboard</div>
@@ -57,11 +57,11 @@ export default function Grades() {
         <div style={styles.logoutBtn} onClick={() => { localStorage.clear(); navigate('/') }}>Logout</div>
       </div>
 
-      <div style={styles.main}>
+      <div className="portal-main" style={styles.main}>
         <h1 style={styles.heading}>Grades</h1>
         <p style={styles.subheading}>Semester 4 · Academic Year 2025-26</p>
 
-        <div style={styles.section}>
+        <div className="glass-card" style={styles.section}>
           <table style={styles.table}>
             <thead>
               <tr style={styles.tableHeader}>
@@ -91,15 +91,15 @@ export default function Grades() {
         </div>
 
         <div style={styles.summaryRow}>
-          <div style={styles.summaryCard}>
+          <div className="glass-card" style={styles.summaryCard}>
             <div style={styles.summaryValue}>{gpa}</div>
             <div style={styles.summaryLabel}>Current GPA</div>
           </div>
-          <div style={styles.summaryCard}>
+          <div className="glass-card" style={styles.summaryCard}>
             <div style={styles.summaryValue}>{totalCredits}</div>
             <div style={styles.summaryLabel}>Total Credits</div>
           </div>
-          <div style={styles.summaryCard}>
+          <div className="glass-card" style={styles.summaryCard}>
             <div style={styles.summaryValue}>{avgMarks}</div>
             <div style={styles.summaryLabel}>Average Marks</div>
           </div>

@@ -31,8 +31,8 @@ export default function Courses() {
   if (loading) return <div style={{ padding: 40 }}>Loading...</div>
 
   return (
-    <div style={styles.container}>
-      <div style={styles.sidebar}>
+    <div className="portal-shell" style={styles.container}>
+      <div className="portal-sidebar" style={styles.sidebar}>
         <div style={styles.sidebarTitle}>Student Portal</div>
         <nav style={styles.nav}>
           <div style={styles.navItem} onClick={() => navigate('/dashboard')}>Dashboard</div>
@@ -43,13 +43,13 @@ export default function Courses() {
         <div style={styles.logoutBtn} onClick={() => { localStorage.clear(); navigate('/') }}>Logout</div>
       </div>
 
-      <div style={styles.main}>
+      <div className="portal-main" style={styles.main}>
         <h1 style={styles.heading}>My Courses</h1>
         <p style={styles.subheading}>Semester 4 · Academic Year 2025-26 · {courses.length} Courses</p>
 
         <div style={styles.grid}>
           {courses.map((c) => (
-            <div key={c._id} style={styles.card}>
+            <div className="glass-card" key={c._id} style={styles.card}>
               <div style={styles.cardHeader}>
                 <span style={styles.codeTag}>{c.courseCode}</span>
                 <span style={styles.creditsTag}>{c.credits} Credits</span>

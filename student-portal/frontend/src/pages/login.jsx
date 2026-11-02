@@ -39,8 +39,8 @@ export default function Login() {
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
+    <div className="login-shell" style={styles.container}>
+      <div className="glass-card login-card" style={styles.card}>
         <h2 style={styles.title}>Student Portal</h2>
         <p style={styles.subtitle}>Sign in to your account</p>
 

@@ -51,8 +51,8 @@ export default function Dashboard() {
   if (loading) return <div style={{ padding: 40 }}>Loading...</div>
 
   return (
-    <div style={styles.container}>
-      <div style={styles.sidebar}>
+    <div className="portal-shell" style={styles.container}>
+      <div className="portal-sidebar" style={styles.sidebar}>
         <div style={styles.sidebarTitle}>Student Portal</div>
         <nav style={styles.nav}>
           <div style={{ ...styles.navItem, ...styles.navActive }}>Dashboard</div>
@@ -63,32 +63,32 @@ export default function Dashboard() {
         <div style={styles.logoutBtn} onClick={logout}>Logout</div>
       </div>
 
-      <div style={styles.main}>
+      <div className="portal-main" style={styles.main}>
         <div style={styles.header}>
           <h1 style={styles.heading}>Welcome, {user.name}</h1>
           <p style={styles.subheading}>Student ID: {user.studentId} · Computer Science · 4th Semester</p>
         </div>
 
         <div style={styles.statsGrid}>
-          <div style={styles.statCard}>
+          <div className="glass-card" style={styles.statCard}>
             <div style={{ ...styles.statValue, color: '#4f46e5' }}>{gpa}</div>
             <div style={styles.statLabel}>GPA</div>
           </div>
-          <div style={styles.statCard}>
+          <div className="glass-card" style={styles.statCard}>
             <div style={{ ...styles.statValue, color: '#16a34a' }}>{avgAttendance}%</div>
             <div style={styles.statLabel}>Attendance</div>
           </div>
-          <div style={styles.statCard}>
+          <div className="glass-card" style={styles.statCard}>
             <div style={{ ...styles.statValue, color: '#d97706' }}>{enrollments.length}</div>
             <div style={styles.statLabel}>Courses</div>
           </div>
-          <div style={styles.statCard}>
+          <div className="glass-card" style={styles.statCard}>
             <div style={{ ...styles.statValue, color: '#dc2626' }}>{enrollments.reduce((s, e) => s + (e.courseId?.credits || 0), 0)}</div>
             <div style={styles.statLabel}>Credits</div>
           </div>
         </div>
 
-        <div style={styles.section}>
+        <div className="glass-card" style={styles.section}>
           <h2 style={styles.sectionTitle}>Enrolled Courses</h2>
           <table style={styles.table}>
             <thead>

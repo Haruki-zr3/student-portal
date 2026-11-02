@@ -33,9 +33,9 @@ export default function AdminPanel() {
   }
 
   return (
-    <div style={styles.container}>
+    <div className="portal-shell" style={styles.container}>
       {/* Sidebar */}
-      <div style={styles.sidebar}>
+      <div className="portal-sidebar" style={styles.sidebar}>
         <div style={styles.sidebarTitle}>Student Portal</div>
         <nav style={styles.nav}>
           <div style={styles.navItem} onClick={() => navigate('/dashboard')}>Dashboard</div>
@@ -45,7 +45,7 @@ export default function AdminPanel() {
       </div>
 
       {/* Main */}
-      <div style={styles.main}>
+      <div className="portal-main" style={styles.main}>
         <h1 style={styles.heading}>Admin Panel</h1>
         <p style={styles.subheading}>Manage students and courses</p>
 
@@ -66,7 +66,7 @@ export default function AdminPanel() {
         </div>
 
         {activeTab === 'students' && (
-          <div style={styles.panel}>
+          <div className="glass-card" style={styles.panel}>
             <form style={styles.form} onSubmit={addStudent}>
               <input style={styles.input} placeholder="Student ID" value={studentForm.id}
                 onChange={(e) => setStudentForm({ ...studentForm, id: e.target.value })} />
@@ -103,7 +103,7 @@ export default function AdminPanel() {
         )}
 
         {activeTab === 'courses' && (
-          <div style={styles.panel}>
+          <div className="glass-card" style={styles.panel}>
             <form style={styles.form} onSubmit={addCourse}>
               <input style={styles.input} placeholder="Course Code" value={courseForm.code}
                 onChange={(e) => setCourseForm({ ...courseForm, code: e.target.value })} />
