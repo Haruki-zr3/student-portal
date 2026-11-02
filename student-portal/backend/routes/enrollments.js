@@ -1,9 +1,41 @@
 const express = require('express')
 const router = express.Router()
 const Enrollment = require('../models/enrollment')
+const User = require('../models/user')
+const Course = require('../models/course')
 
 router.get('/', async (req, res) => {
   try {
+    const [students, courses] = await Promise.all([
+      User.find({ role: 'student' }).select('_id'),
+      Course.find().select('_id'),
+    ])
+
+    const existingEnrollments = await Enrollment.find().select('studentId courseId')
+    const existingPairs = new Set(
+      existingEnrollments.map((enrollment) => `${enrollment.studentId}:${enrollment.courseId}`)
+    )
+    const missingEnrollments = []
+
+    for (const student of students) {
+      for (const course of courses) {
+        if (!existingPairs.has(`${student._id}:${course._id}`)) {
+          missingEnrollments.push({
+            studentId: student._id,
+            courseId: course._id,
+            attendance: 0,
+            classesAttended: 0,
+            totalClasses: 0,
+            grade: { letter: '' },
+          })
+        }
+      }
+    }
+
+    if (missingEnrollments.length > 0) {
+      await Enrollment.insertMany(missingEnrollments)
+    }
+
     const enrollments = await Enrollment.find()
       .populate('studentId', 'name studentId')
       .populate('courseId', 'title courseCode instructor schedule credits')
