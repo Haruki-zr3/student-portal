@@ -33,7 +33,7 @@ export default function Login() {
       } else {
         navigate('/dashboard')
       }
-    } catch (err) {
+    } catch {
       setError('Cannot connect to server')
     }
   }

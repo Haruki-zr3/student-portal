@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import PortalSidebar from '../components/PortalSidebar'
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const [student, setStudent] = useState(null)
   const [enrollments, setEnrollments] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -32,12 +32,6 @@ export default function Dashboard() {
     fetchData()
   }, [])
 
-  function logout() {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    navigate('/')
-  }
-
   const avgAttendance = enrollments.length
     ? Math.round(enrollments.reduce((s, e) => s + e.attendance, 0) / enrollments.length)
     : 0
@@ -52,16 +46,7 @@ export default function Dashboard() {
 
   return (
     <div className="portal-shell" style={styles.container}>
-      <div className="portal-sidebar" style={styles.sidebar}>
-        <div style={styles.sidebarTitle}>Student Portal</div>
-        <nav style={styles.nav}>
-          <div style={{ ...styles.navItem, ...styles.navActive }}>Dashboard</div>
-          <div style={styles.navItem} onClick={() => navigate('/courses')}>Courses</div>
-          <div style={styles.navItem} onClick={() => navigate('/grades')}>Grades</div>
-          <div style={styles.navItem} onClick={() => navigate('/attendance')}>Attendance</div>
-        </nav>
-        <div style={styles.logoutBtn} onClick={logout}>Logout</div>
-      </div>
+      <PortalSidebar activePath="/dashboard" isAdmin={user.role === 'admin'} />
 
       <div className="portal-main" style={styles.main}>
         <div style={styles.header}>

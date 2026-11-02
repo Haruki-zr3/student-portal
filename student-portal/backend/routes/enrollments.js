@@ -24,7 +24,16 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   try {
-    const updated = await Enrollment.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    const payload = { ...req.body }
+    if (payload.classesAttended !== undefined || payload.totalClasses !== undefined) {
+      const attended = Number(payload.classesAttended ?? 0)
+      const total = Number(payload.totalClasses ?? 0)
+      payload.attendance = total > 0 ? (attended / total) * 100 : 0
+    } else if (payload.attendance !== undefined) {
+      payload.attendance = Number(payload.attendance)
+    }
+
+    const updated = await Enrollment.findByIdAndUpdate(req.params.id, payload, { new: true })
     res.json(updated)
   } catch (err) {
     res.status(500).json({ message: err.message })

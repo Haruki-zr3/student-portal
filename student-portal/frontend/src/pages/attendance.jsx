@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import PortalSidebar from '../components/PortalSidebar'
 
 export default function Attendance() {
   const navigate = useNavigate()
@@ -45,16 +46,7 @@ export default function Attendance() {
 
   return (
     <div className="portal-shell" style={styles.container}>
-      <div className="portal-sidebar" style={styles.sidebar}>
-        <div style={styles.sidebarTitle}>Student Portal</div>
-        <nav style={styles.nav}>
-          <div style={styles.navItem} onClick={() => navigate('/dashboard')}>Dashboard</div>
-          <div style={styles.navItem} onClick={() => navigate('/courses')}>Courses</div>
-          <div style={styles.navItem} onClick={() => navigate('/grades')}>Grades</div>
-          <div style={{ ...styles.navItem, ...styles.navActive }}>Attendance</div>
-        </nav>
-        <div style={styles.logoutBtn} onClick={() => { localStorage.clear(); navigate('/') }}>Logout</div>
-      </div>
+      <PortalSidebar activePath="/attendance" />
 
       <div className="portal-main" style={styles.main}>
         <h1 style={styles.heading}>Attendance</h1>
