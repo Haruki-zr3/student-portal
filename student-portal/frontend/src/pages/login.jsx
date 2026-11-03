@@ -73,10 +73,10 @@ export default function Login() {
             Login
           </button>
 
-          <p style={styles.hint}>
+          {/* <p style={styles.hint}>
             Student: haruki@university.edu / student123<br/>
             Admin: admin@university.edu / admin123
-          </p>
+          </p> */}
         </div>
       </div>
     </div>
